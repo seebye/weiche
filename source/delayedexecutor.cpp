@@ -10,13 +10,16 @@ DelayedExecutor::DelayedExecutor(set<ushort> setKeys,
 								string strCmd_Press,
 								string strCmd_PressLong,
 								string strCmd_PressDbl,
+								BOOL bPressLongRepeat,
 								function<void(set<ushort>)> cbExecuted)
 	 : m_bInterrupted(false), m_bRunning(false),
+	   m_bFinished(false),
 	   m_setKeys(setKeys), m_lPressedMs(0),
 	   //m_mapActions(mapActions),
 	   m_strCmd_Press(strCmd_Press),
 	   m_strCmd_PressLong(strCmd_PressLong),
 	   m_strCmd_PressDbl(strCmd_PressDbl),
+	   m_bPressLongRepeat(bPressLongRepeat),
 	   m_cbExecuted(cbExecuted) {
 }
 
@@ -26,7 +29,7 @@ void DelayedExecutor::start(long lPressedMs) {
 	thread(&DelayedExecutor::operator(), this).detach();
 }
 
-bool DelayedExecutor::isRunning() {
+BOOL DelayedExecutor::isRunning() {
 	return m_bRunning;
 }
 
@@ -50,7 +53,7 @@ string DelayedExecutor::getCommand(Event event) {
 	return strCmd;
 }
 
-bool DelayedExecutor::isSupported(Event event) {
+BOOL DelayedExecutor::isSupported(Event event) {
 	return !getCommand(event).empty();//contains(m_mapActions, event);
 }
 
@@ -59,7 +62,8 @@ void DelayedExecutor::interrupt() {
 }
 
 void DelayedExecutor::repeat() {
-	if(isSupported(EVENT_PRESS_LONG)) {
+	if(isSupported(EVENT_PRESS_LONG)
+		&& m_bPressLongRepeat) {
 		execute_unfinished(EVENT_PRESS_LONG);
 	}
 }
@@ -84,17 +88,14 @@ void DelayedExecutor::dbl_press() {
 }
 
 void DelayedExecutor::executed() {
+	m_bFinished = true;
 	m_cbExecuted(m_setKeys);
 }
 
 void DelayedExecutor::operator()() {
-	/*if(m_lPressedMs >= PRESS_LONG_MS
-		&& isSupported(EVENT_PRESS_LONG)) {
-		execute(EVENT_PRESS_LONG);
-	}
-	else */
+	// long pressed && not repeated && supported
 	if(m_lPressedMs >= PRESS_LONG_MS
-		&& m_lPressedMs <= PRESS_LONG_REPEAT_MS
+		&& (!m_bPressLongRepeat || m_lPressedMs <= PRESS_LONG_REPEAT_MS)
 		&& isSupported(EVENT_PRESS_LONG)) {
 		// (single) long press
 		execute(EVENT_PRESS_LONG);
@@ -111,7 +112,7 @@ void DelayedExecutor::operator()() {
 		&& isSupported(EVENT_PRESS)) {
 		execute(EVENT_PRESS);
 	}
-	else {
+	else if(!m_bFinished) {
 		// EVENT_PRESS_LONG multiple times executed
 		// or dbl_press executed
 		// or press not supported

@@ -6,6 +6,12 @@
 
 using namespace std;
 
+// json keys
+#define JXX_KEY_KEYS	"KEYS"
+#define JXX_KEY_REPEAT	"REPEAT"
+
+// key codes
+
 #define KEYCODE_LIST(code)		\
 	code(KEY_UNKNOWN, -1)		\
 	code(KEY_RESERVED, 0)		\

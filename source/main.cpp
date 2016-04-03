@@ -120,9 +120,13 @@ int main(int argc, char** argv) {
 	string strKbPath = KEYBINDINGS;
 	int nFlags = 0;
 
-	signal(SIGINT, signalHandler);
-	signal(SIGABRT, signalHandler);
+	// prevent the event consumption after a crash
 	signal(SIGTERM, signalHandler);
+	signal(SIGSEGV, signalHandler);
+	signal(SIGINT, signalHandler);
+	signal(SIGILL, signalHandler);
+	signal(SIGABRT, signalHandler);
+	signal(SIGFPE, signalHandler);
 
 	if(check_arg('h') || check_arg("help")) {
 		show_help();

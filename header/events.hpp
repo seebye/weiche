@@ -18,7 +18,8 @@ using namespace std;
 	code(EVENT_UNKNOWN)	\
 	code(EVENT_PRESS)	\
 	code(EVENT_PRESS_LONG)	\
-	code(EVENT_PRESS_DBL)
+	code(EVENT_PRESS_DBL)	\
+	code(EVENT_PRESS_LONG_REPEAT)
 
 #define DEFINE_ENUM_TYPE(type) type,
 enum Event {

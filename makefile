@@ -1,6 +1,6 @@
 CXX		:= g++
-CXXFLAGS 	:= -O2 -std=c++11 -Wall -pthread -lX11
-CXXFLAGS_DEBUG	:= -g -std=c++11 -Wall -pthread -lX11
+CXXFLAGS 	:= -O2 -std=c++14 -Wall -Wextra -pedantic -pthread -lX11
+CXXFLAGS_DEBUG	:= -g -std=c++14 -Wall -Wextra -pedantic -pthread -lX11
 
 TARGET := weiche
 SOURCE := jsonxx/jsonxx.cc \

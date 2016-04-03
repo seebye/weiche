@@ -13,6 +13,16 @@ using namespace std::chrono;
 typedef unsigned short ushort;
 typedef unsigned int uint;
 
+
+// bug fix 
+// delayed executor 
+// m_bInterrupted && !m_bInterrupted == true 
+// if not repreated long press
+// ..
+#define BOOL char
+#define true 1
+#define false 0
+
 milliseconds timestampms();
 void sleepms(long lMS);
 

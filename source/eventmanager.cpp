@@ -71,10 +71,10 @@ EventAction	EventManager::onPress(ushort code) {
 	if(contains(m_mapKeybindings, m_setPressed)
 		&& !contains(m_mapPending, m_setPressed)) {
 		DelayedExecutor* executor = new DelayedExecutor(m_setPressed,
-														//m_mapKeybindings[m_setPressed],
 														m_mapKeybindings[m_setPressed][EVENT_PRESS],
 														m_mapKeybindings[m_setPressed][EVENT_PRESS_LONG],
 														m_mapKeybindings[m_setPressed][EVENT_PRESS_DBL],
+														contains(m_mapKeybindings[m_setPressed], EVENT_PRESS_LONG_REPEAT),
 														m_cbExecuted);
 		m_mapPending[m_setPressed] = executor;
 

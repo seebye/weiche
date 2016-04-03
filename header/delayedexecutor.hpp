@@ -11,20 +11,21 @@
 
 using namespace std;
 
-
 class DelayedExecutor {
 private:
-	bool m_bInterrupted;
-	bool m_bRunning;
+	BOOL m_bInterrupted;
+	BOOL m_bRunning;
+	BOOL m_bFinished;
 	set<ushort> m_setKeys;
 	long m_lPressedMs;
 	//map<Event, string>& m_mapActions;
 	string m_strCmd_Press;
 	string m_strCmd_PressLong;
 	string m_strCmd_PressDbl;
+	BOOL m_bPressLongRepeat;
 	function<void(set<ushort>)> m_cbExecuted;
 
-	bool isSupported(Event event);
+	BOOL isSupported(Event event);
 	void execute_unfinished(Event event);
 	void execute(Event event);
 	string getCommand(Event event);
@@ -34,6 +35,7 @@ public:
 			string strCmd_Press,
 			string strCmd_PressLong,
 			string strCmd_PressDbl,
+			BOOL bPressLongRepeat,
 			function<void(set<ushort>)> cbExecuted);
 
 	void interrupt();
@@ -41,7 +43,7 @@ public:
 	void operator()();
 	void executed();
 	void start(long lPressedMs);
-	bool isRunning();
+	BOOL isRunning();
 	void repeat();
 };
 

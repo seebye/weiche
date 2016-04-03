@@ -8,8 +8,6 @@
 
 namespace jxx = jsonxx;
 
-#define JXX_KEY_KEYS	"KEYS"
-
 map<set<ushort>, map<Event, string>> loadKeybindings(string strFile) {
 	jxx::Array arr;
 	map<set<ushort>, map<Event, string>> mapKeybindings;
@@ -33,6 +31,7 @@ map<set<ushort>, map<Event, string>> loadKeybindings(string strFile) {
 
 			if(mapKV.find(JXX_KEY_KEYS) == mapKV.end()
 				|| !mapKV[JXX_KEY_KEYS]->is<jxx::Array>()) {
+				// always required
 				cout << "Error["<<i<<":depth 2]: keys missing / wrong type"<<endl;
 			}
 			else {
@@ -68,18 +67,27 @@ map<set<ushort>, map<Event, string>> loadKeybindings(string strFile) {
 				Event event = getEvent(strKey);
 
 				if(strKey != JXX_KEY_KEYS) {
-					if(event == EVENT_UNKNOWN) {
+					if(strKey == JXX_KEY_REPEAT) {
+						// repeat on long pressing
+						// (value = doesn't matter)
+						mapEvents[EVENT_PRESS_LONG_REPEAT] = "true";
+					}
+					else if(event == EVENT_UNKNOWN) {
+						// spelling mistake?
 						cout << "Error["<<i<<":depth 2]: unknown event "<<strKey<<endl;
 					}
-					else if(mapEvents.find(event) != mapEvents.end()) {
+					else if(contains(mapEvents, event)) {
+						// duplicated key - event already added
 						cout << "Error["<<i<<":depth 2]: duplicated event "<<strKey<<endl;
 					}
 					else {
 						if(!value->is<string>()) {
+							// value != type string -> we expected a command
 							cout << "Error["<<i<<":depth 2]: invalid value event "<<strKey<<endl;
 						}
-
-						mapEvents[event] = value->get<string>();
+						else {
+							mapEvents[event] = value->get<string>();
+						}
 					}
 				}
 			});
