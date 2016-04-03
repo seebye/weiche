@@ -69,8 +69,13 @@ map<set<ushort>, map<Event, string>> loadKeybindings(string strFile) {
 				if(strKey != JXX_KEY_KEYS) {
 					if(strKey == JXX_KEY_REPEAT) {
 						// repeat on long pressing
-						// (value = doesn't matter)
-						mapEvents[EVENT_PRESS_LONG_REPEAT] = "true";
+						if(!value->is<bool>()) {
+							cout << "Error["<<i<<":depth 2]: invalid value "<<strKey<<endl;
+						}
+						else if(value->get<bool>()) {
+							// value doesn't matter
+							mapEvents[EVENT_PRESS_LONG_REPEAT] = "true";
+						}
 					}
 					else if(event == EVENT_UNKNOWN) {
 						// spelling mistake?
@@ -91,6 +96,14 @@ map<set<ushort>, map<Event, string>> loadKeybindings(string strFile) {
 					}
 				}
 			});
+
+			if(contains(mapEvents, EVENT_PRESS_LONG_REPEAT)
+				&& !contains(mapEvents, EVENT_PRESS_LONG)
+				&& contains(mapEvents, EVENT_PRESS)) {
+				// repeat enabled - no long press command
+				// -> use press command
+				mapEvents[EVENT_PRESS_LONG] = mapEvents[EVENT_PRESS];
+			}
 
 			if(!setKeys.empty() && !mapEvents.empty()) {
 				mapKeybindings[setKeys] = mapEvents;
